@@ -1,35 +1,139 @@
-class ProductManager{
-    constructor(){
-        this.products=[]
-    
-    }
-    static id=0
-    addProduct(title, description, price, thumbmail, code, stock){
-        ProductManager.id++
-        this.products.push({title, description, price, thumbmail, code, stock, id:ProductManager.id});
-    }
+const fs = require("fs");
 
-    getProduct(){
-        return this.products
-    }
+class ProductManager {
+  constructor(path) {
+    this.path = path;
+    this.products = [];
+  }
 
-    getProductById(id){
-        if(!this.products.find((product)=> product.id === id)){
-            return 'Not Found'
-        }else{
-            return this.products.find((product)=> product.id === id)
-        }
+  getProducts = async () => {
+    const productlist = await fs.promises.readFile(this.path, "utf-8");
+    const productlistparse = JSON.parse(productlist);
+    return productlistparse;
+  };
+
+  generateId = async () => {
+    const counter = this.products.length;
+    if (counter === 0) {
+      return 1;
+    } else {
+      return this.products[counter - 1].id + 1;
     }
+  };
+
+  addProduct = async (title, description, price, thumbnail, code, stock) => {
+    if (!title || !description || !price || !thumbnail || !code || !stock) {
+      console.error("INGRESE TODOS LOS DATOS DEL PRODUCTO");
+      return;
+    } else {
+      const codigorepetido = this.products.find(
+        (elemento) => elemento.code === code
+      );
+      if (codigorepetido) {
+        console.error("EL CODIGO DEL PRODUCTO QUE DESEA AGREGAR ES REPETIDO");
+        return;
+      } else {
+        const id = await this.generateId();
+        const productnew = {
+          id,
+          title,
+          description,
+          price,
+          thumbnail,
+          code,
+          stock,
+        };
+        this.products.push(productnew);
+        await fs.promises.writeFile(
+          this.path,
+          JSON.stringify(this.products, null, 2)
+        );
+      }
+    }
+  };
+
+  updateProduct = async (
+    id,
+    title,
+    description,
+    price,
+    thumbnail,
+    code,
+    stock
+  ) => {
+    if (
+      !id ||
+      !title ||
+      !description ||
+      !price ||
+      !thumbnail ||
+      !code ||
+      !stock
+    ) {
+      console.error("INGRESE TODOS LOS DATOS DEL PRODUCTO PARA SU ACTUALIZACION");
+      return;
+    } else {
+      const allproducts = await this.getProducts();
+      const codigorepetido = allproducts.find(
+        (elemento) => elemento.code === code
+      );
+      if (codigorepetido) {
+        console.error("EL CODIGO DEL PRODUCTO QUE DESEA ACTUALIZAR ES REPETIDO");
+        return;
+      } else {
+        const currentProductsList = await this.getProducts();
+        const newProductsList = currentProductsList.map((elemento) => {
+          if (elemento.id === id) {
+            const updatedProduct = {
+              ...elemento,
+              title,
+              description,
+              price,
+              thumbnail,
+              code,
+              stock,
+            };
+            return updatedProduct;
+          } else {
+            return elemento;
+          }
+        });
+        await fs.promises.writeFile(
+          this.path,
+          JSON.stringify(newProductsList, null, 2)
+        );
+      }
+    }
+  };
+
+  deleteProduct = async (id) => {
+    const allproducts = await this.getProducts();
+    const productswithoutfound = allproducts.filter(
+      (elemento) => elemento.id !== id
+    );
+    await fs.promises.writeFile(
+      this.path,
+      JSON.stringify(productswithoutfound, null, 2)
+    );
+  };
+
+  getProductById = async (id) => {
+    const allproducts = await this.getProducts();
+    const found = allproducts.find((element) => element.id === id);
+    return found;
+  };
 }
- const productos = new ProductManager();
 
- console.log(productos.getProduct());
+async function generator() {
+  const productmanager = new ProductManager("./products.json");
+  // await productmanager.addProduct("product1", "description1", 3000, "url", "abc123", 500);
+  // await productmanager.addProduct("product2", "description2", 3000, "url", "abc122", 500);
+  // await productmanager.addProduct("product3", "description2", 3000, "url", "abc125", 500);
+  // await productmanager.updateProduct(3, "zzzzz", "xxxxxx", 1500, "url", "abc126", 500);
+  // await productmanager.deleteProduct(2);
+  const solo = await productmanager.getProductById(3);
+  // const listado = await productmanager.getProducts();
+  console.log(solo);
+}
 
- productos.addProduct('lapiz','para escribir',300,'imagen.com','abc123',15)
- productos.addProduct('pincel','para pintar',500,'imagen2.com','abc124',30)
-
- console.log(productos.getProduct());
-
- console.log(productos.getProductById(2));
-
- console.log(productos.getProductById(3));
+generator();
