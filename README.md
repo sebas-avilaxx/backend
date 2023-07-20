@@ -1,2 +1,0 @@
-# DesafioEntregable2
- Backend
