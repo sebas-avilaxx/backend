@@ -1,0 +1,67 @@
+[
+  {
+    "id": 1,
+    "title": "Producto1",
+    "description": "description1",
+    "price": 1500,
+    "thumbnail": "./img/negra.jpg",
+    "code": "abc12df8",
+    "stock": 500
+  },
+  {
+    "id": 2,
+    "title": "Producto2",
+    "description": "description1",
+    "price": 1500,
+    "thumbnail": "./img/negra.jpg",
+    "code": "abc1dd28",
+    "stock": 500
+  },
+  {
+    "id": 3,
+    "title": "product3",
+    "description": "description1",
+    "price": 1500,
+    "thumbnail": "./img/negra.jpg",
+    "code": "abc12sdasda8",
+    "stock": 500
+  },
+  {
+    "id": 4,
+    "title": "product4",
+    "description": "description1",
+    "price": 1500,
+    "thumbnail": "./img/negra.jpg",
+    "code": "abc1asd33328",
+    "stock": 500
+  },
+  {
+    "id": 5,
+    "title": "product5",
+    "description": "description1",
+    "price": 1500,
+    "thumbnail": "./img/negra.jpg",
+    "code": "abasdasd128",
+    "stock": 500
+  },
+  {
+    "id": 6,
+    "title": "product6",
+    "description": "description1",
+    "price": 1500,
+    "thumbnail": "./img/negra.jpg",
+    "code": "abcdddd128",
+    "stock": 500
+  },
+  {
+    "id": 7,
+    "title": "Producto2",
+    "description": "description1",
+    "price": 1500,
+    "thumbnail": "./img/negra.jpg",
+    "category": "alcohol",
+    "status": true,
+    "code": "abc1dd283232",
+    "stock": 500
+  }
+]

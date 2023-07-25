@@ -1,36 +1,60 @@
-import express from "express";
-import index from "./index.js";
-const manager = new index("../files/products.json");
-const app = express();
-const port = 1765;
+import express from "express"
+import viewRouter from "./routes/view.router.js"
+import productRouter from "./routes/products.router.js"
+import cartRouter from "./routes/carts.router.js"
+import {__dirname} from "./utils.js"
+import handlebars from "express-handlebars"
+
+import {Server, Socket} from "socket.io"
 
 
-app.set("json spaces", 2);
-app.use(express.json());
+const app=express()
+const PORT=1765;
+console.log(__dirname)
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
 
-app.get("/products",async(req,res)=>{
-    const {limit}=req.query
-    const products= await manager.getProducts()
-    if(limit){
-     const limitproducts=products.slice(0,limit)
-     res.json({status:"Success",limitproducts})
+app.use(express.static(__dirname+"/public"))
 
-    }
-    else{
-        res.json({status:"Success",products})
-    }
+app.engine("handlebars",handlebars.engine())
+app.set("view engine","handlebars")
+app.set("views",__dirname+"/views")
+
+
+
+app.use("/api",productRouter)
+app.use("/api",cartRouter)
+app.use("/",viewRouter)
+
+
+const httpServer=app.listen(PORT,()=>{
+    console.log("server is working")
 })
 
-app.get("/products/:pid",async(req,res)=>{
+
+const socketServer= new Server(httpServer)
+
+import ProductManager from "./managers/productManager.js"
+const pmanagersocket=new ProductManager(__dirname+"/files/products.json")
+
+socketServer.on("connection",async(socket)=>{
+    console.log("client connected con ID:",socket.id)
+     const listadeproductos=await pmanagersocket.getProducts({})
+    socketServer.emit("enviodeproducts",listadeproductos)
+
+    socket.on("addProduct",async(obj)=>{
+    await pmanagersocket.addProduct(obj)
+    const listadeproductos=await pmanagersocket.getProducts({})
+    socketServer.emit("enviodeproducts",listadeproductos)
+    })
+
+    socket.on("deleteProduct",async(id)=>{
+        console.log(id)
+        await pmanagersocket.deleteProduct(id)
+        const listadeproductos=await pmanagersocket.getProducts({})
+        socketServer.emit("enviodeproducts",listadeproductos)
+        })
+
     
-    const {pid}=req.params
-
-    const products= await manager.getProducts()
-    const productfind=products.find(elemento=>elemento.id===parseInt(pid))
-    console.log(productfind)
-    res.send({status:"success",productfind})
+    
 })
-
-app.listen(port, () => {
-  console.log("server is working");
-});
