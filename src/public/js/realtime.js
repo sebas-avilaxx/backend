@@ -72,7 +72,8 @@ form.addEventListener("submit", (evt) => {
 
 document.getElementById("delete-btn").addEventListener("click", function () {
     const deleteidinput = document.getElementById("id-prod");
-    const deleteid = parseInt(deleteidinput.value);
+    const deleteid = deleteidinput.value;
+    console.log(deleteid)
     socketClient.emit("deleteProduct", deleteid);
     deleteidinput.value = "";
   });

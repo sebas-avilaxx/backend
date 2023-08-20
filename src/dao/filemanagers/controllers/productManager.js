@@ -41,6 +41,7 @@ import fs from "fs"
 
 
 
+    //GENERATE ID 
     generateId=async()=>{
        if(fs.existsSync(this.path)){
         const listaproducts=await this.getProducts({})
@@ -79,7 +80,7 @@ import fs from "fs"
     }
 
 
-     
+     //UPDATE
      updateProduct=async(id,obj)=>{
          const {pid}=id
          const{title,description,price,thumbnail,category,status,code,stock}=obj
@@ -119,6 +120,7 @@ import fs from "fs"
       }
 
 
+      //DELETE
       deleteProduct=async(pid)=>{
 
         const allproducts=await this.getProducts({})
