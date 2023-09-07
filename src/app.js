@@ -1,6 +1,7 @@
 import express from "express"
 import viewRouter from "./routes/view.router.js"
 import productRouter from "./routes/products.router.js"
+import sessionsRouter from "./routes/sessions.router.js"
 import cartRouter from "./routes/carts.router.js"
 import {__dirname} from "./utils.js"
 import handlebars from "express-handlebars"
@@ -9,6 +10,7 @@ import "./dao/dbConfig.js"
 
 const app=express()
 const PORT=process.env.PORT|1765;
+
 
 
 app.use(express.json())
@@ -24,6 +26,7 @@ app.set("views",__dirname+"/views")
 
 app.use("/api",productRouter)
 app.use("/api",cartRouter)
+app.use("/sessions", sessionsRouter)
 app.use("/",viewRouter)
 
 
